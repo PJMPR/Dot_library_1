@@ -4,15 +4,15 @@ using System.Text;
 
 namespace Dot.Library.Database.Model
 {
-    class User
+    public class User
     {
-        private int id { get; }
-        private string name { set; get; }
-        private string login { set; get; }
-        private string pass { set; get; }
-        private string surname { set; get; }
-        private string adress { set; get; }
-        private string postalCode { set; get; }
+        public int id { get; }
+        public string name { set; get; }
+        public string login { set; get; }
+        public string pass { set; get; }
+        public string surname { set; get; }
+        public string adress { set; get; }
+        public string postalCode { set; get; }
 
         public List<Int32> UserRent { get; set; } = new List<int>();
     }
