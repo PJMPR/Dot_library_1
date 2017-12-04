@@ -9,17 +9,10 @@ namespace Dot.Library.Database.Model
         int id;
         string title;
         string content;
-        string fromUser;
-        string toUser;
-
-        public Message(int id, string title, string content, string fromUser, string toUser)
-        {
-            this.id = id;
-            this.title = title;
-            this.content = content;
-            this.fromUser = fromUser;
-            this.toUser = toUser;
-        }
+        
+        public int Id{get;set;}
+        public int Title{get;set;}
+        public int Content{get;set;}
 
     }
 }
