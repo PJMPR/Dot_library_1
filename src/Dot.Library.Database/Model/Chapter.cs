@@ -6,6 +6,7 @@ namespace Dot.Library.Database.Model
 {
     public class Chapter
     {
+        public virtual Chapter Parent { get; set; }
         public int Id { get; set; }
         public int BookId { get; set; }
         public string Name { get; set; }
