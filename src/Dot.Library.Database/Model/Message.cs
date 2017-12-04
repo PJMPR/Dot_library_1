@@ -6,9 +6,6 @@ namespace Dot.Library.Database.Model
 {
     public class Message
     {
-        int id;
-        string title;
-        string content;
         
         public int Id{get;set;}
         public int Title{get;set;}
