@@ -37,10 +37,28 @@ namespace Dot.Library.Web.Controllers
                 reservatedBooks = _books,
                 user = new User()
                 {
-                    adress = "Zadupna 1",
-                    login = "420blazeIt",
+                    adress = "Brzegi 55",
+                    login = "Tokiya",
+                    name = "Adam",
+                    surname = "Urbanowicz",
+                    pass = "WszyscyMacie5",
+                    postalCode = "86-666"
+                }
+            },
 
-                };
+            new BookReservation()
+            {
+                ID = 1,
+                reservatedBooks = _books,
+                user = new User()
+                {
+                    adress = "Brzegi 56",
+                    login = "Glonfindel",
+                    name = "Karol",
+                    surname = "Siejka",
+                    pass = "KaszankaJestCool",
+                    postalCode = "87-666"
+                }
             }
         };
 
@@ -73,42 +91,46 @@ namespace Dot.Library.Web.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]Book book)
+        public IActionResult Put(int id, [FromBody] BookReservation br)
         {
-            if (book == null || book.ID != id)
+            if (br == null || br.ID != id)
             {
                 return BadRequest();
             }
-            var searchedBook = _bookReservations.FirstOrDefault(x => x.ID == book.ID);
-            if (searchedBook == null)
+            var searchedBookReservation = _bookReservations.FirstOrDefault(x => x.ID == br.ID);
+            if (searchedBookReservation == null)
             {
                 return NotFound();
             }
-            _bookReservations.Remove(searchedBook);
+            _bookReservations.Remove(searchedBookReservation);
 
-            ///Dodać mapper gdy bedzie implementacja modelu Book
-            ///
+            searchedBookReservation = mapBookReservation(br);
 
-            searchedBook.ImgURL = book.ImgURL;
-            searchedBook.Publisher = book.Publisher;
-            searchedBook.Quantity = book.Quantity;
-            searchedBook.Title = book.Title;
-            searchedBook.Description = book.Description;
-            searchedBook.Authors = book.Authors;
-            _bookReservations.Add(searchedBook);
+            _bookReservations.Add(searchedBookReservation);
+
             return new NoContentResult();
+        }
+
+        private BookReservation mapBookReservation(BookReservation br)
+        {
+            return new BookReservation()
+            {
+                ID = br.ID,
+                reservatedBooks = br.reservatedBooks,
+                user = br.user
+            };
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var searchedBook = _bookReservations.FirstOrDefault(x => x.ID == id);
-            if (searchedBook == null)
+            var searchedBookReservation = _bookReservations.FirstOrDefault(x => x.ID == id);
+            if (searchedBookReservation == null)
             {
                 return NotFound();
             }
-            _bookReservations.Remove(searchedBook);
+            _bookReservations.Remove(searchedBookReservation);
             return new NoContentResult();
         }
     }
