@@ -14,6 +14,6 @@ namespace Dot.Library.Database.Model
         public string adress { set; get; }
         public string postalCode { set; get; }
 
-        public List<Int32> UserRent { get; set; } = new List<int>();
+        public List<int> UserRent { get; set; } = new List<int>();
     }
 }
