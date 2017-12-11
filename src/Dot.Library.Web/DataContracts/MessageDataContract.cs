@@ -1,3 +1,4 @@
+using Dot.Library.Database.Model;
 using System;
 using System.Runtime.Serialization;
 

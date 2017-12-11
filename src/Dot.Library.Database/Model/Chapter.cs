@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dot.Library.Database.Model
 {
-    [DataContracts]
+    [DataContract]
     public class Chapter
     {
         [DataMember]

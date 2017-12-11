@@ -16,9 +16,7 @@ namespace Dot.Library.Database.Model
         public string Title { get; set; }
         [DataMember]
         public string Publisher { get; set; }
-        [DataMember]
-        public string[] Authors { get; set; }
-        [DataMember]
+        public List<Author> Authors { get; set; }
         public string Description { get; set; }
         [DataMember]
         public int Quantity { get; set; }
