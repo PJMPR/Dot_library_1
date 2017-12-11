@@ -8,8 +8,10 @@ namespace Dot.Library.Database.Model
     {
         
         public int Id{get;set;}
-        public int Title{get;set;}
-        public int Content{get;set;}
+        public string Title{get;set;}
+        public string Content{get;set;}
+        public User Target{get;set;}
+        public DateTime SentTime{get;set;}
 
     }
 }
