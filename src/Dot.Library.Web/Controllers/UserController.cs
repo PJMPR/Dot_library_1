@@ -1,92 +1,84 @@
-[Route("api/[controller]")]
-public class UserController : Controller
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Dot.Library.Web.Controllers
 {
-    private IList<User> _users = new List<User>()
-        { new User() {
-
-            id = 1,
-            name = "Anna",
-            surname = "Nowak",
-            login = "smoczyca",
-            pass = "ostrekly1",
-            adress = "Dêbowa 82, Dawne Lasy",
-            postalCode = "10-000"
-
-        },
-            new User(){
-
-            id = 2,
-            name = "Jan",
-            surname = "Kowalski",
-            login = "bogacz",
-            pass = "money",
-            adress = "Diamentowa 154, Bogaty Dwór",
-            postalCode = "12-999"
-        }
-        };
-
-    [HttpGet]
-    public IEnumerable<User> GetAll() => _users;
-
-
-    [HttpGet("{id}")]
-    public IActionResult GetById(int id)
+    [Route("api/[controller]")]
+    public class UserController : Controller
     {
-        var item = _users.FirstOrDefault(x => x.Id == id);
-        if (item == null)
+
+
+        private readonly IUserRepository _userRepository;
+
+        public UserController(IUserRepository userRepository)
         {
-            return NotFound();
+            _userRepository = userRepository;
         }
-        return new ObjectResult(item);
-    }
 
-    [HttpPost]
-    public IActionResult AddUser([FromBody]User user)
-    {
-        if (user == null)
+        public IEnumerable<User> Get()
         {
-            return BadRequest();
+            return _userRepository.Get();
         }
-        _users.Add(user);
-        return CreatedAtRoute("GetById", new { id = user.Id }, user);
-    }
 
-
-    [HttpPut("{id}")]
-    public IActionResult Put(int id, [FromBody]User user)
-    {
-        if (user == null || user.Id != id)
+        public User Get(int id)
         {
-            return BadRequest();
+            var user = _userRepository.Get(id);
+
+            if (user == null)
+            {
+                throw new HttpResponseException(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.NotFound,
+                    Content = new StringContent("User not found")
+                });
+            }
+
+            return task;
         }
-        var searchedUser = _users.FirstOrDefault(x => x.Id == user.Id);
-        if (searchedUser == null)
+
+        public HttpResponseMessage<User> Post(User user)
         {
-            return NotFound();
+            user = _userRepository.Post(user);
+
+            var response = new HttpResponseMessage<User>(user, HttpStatusCode.Created);
+
+            string uri = Url.Route(null, new { id = user.Id });
+            response.Headers.Location = new Uri(Request.RequestUri, uri);
+
+            return response;
         }
-        _books.Remove(searchedBook);
 
-
-
-        searchedUser.Name = user.Name;
-        searchedUser.Surname = user.Surname;
-        searchedUser.Login = user.Login;
-        searchedUser.Pass = user.Pass;
-        searchedUser.Adress = user.Adress;
-        searchedUser.PostalCode = user.PostalCode;
-        _users.Add(searchedUser);
-        return new NoContentResult();
-    }
-
-    [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
-    {
-        var searchedUser = _users.FirstOrDefault(x => x.Id == id);
-        if (searchedUser == null)
+        public User Put(User user)
         {
-            return NotFound();
+            try
+            {
+                user = _userRepository.Put(user);
+            }
+            catch (Exception)
+            {
+                throw new HttpResponseException(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.NotFound,
+                    Content = new StringContent("Task not found")
+                });
+            }
+
+            return user;
         }
-        _users.Remove(searchedUser);
-        return new NoContentResult();
+
+        public HttpResponseMessage Delete(int id)
+        {
+            _userRepository.Delete(id);
+
+            return new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.NoContent
+            };
+        }
+
+
+
     }
 }
