@@ -6,6 +6,7 @@ namespace Dot.Library.Database.Model
     {
         public int ID { get; set; }
         public User user { get; set; }
+        public DateTime date { get; set; }
         public List<Book> reservatedBooks { get; set; }
     }
 }
