@@ -43,7 +43,8 @@ namespace Dot.Library.Web.Controllers
                     surname = "Urbanowicz",
                     pass = "WszyscyMacie5",
                     postalCode = "86-666"
-                }
+                },
+                SentTime = DateTime.Now.AddDays()
             },
 
             new BookReservation()
@@ -58,7 +59,8 @@ namespace Dot.Library.Web.Controllers
                     surname = "Siejka",
                     pass = "KaszankaJestCool",
                     postalCode = "87-666"
-                }
+                },
+                SentTime = DateTime.Now.AddDays()
             }
         };
 
