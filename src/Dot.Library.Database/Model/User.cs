@@ -6,7 +6,7 @@ namespace Dot.Library.Database.Model
 {
     public class User
     {
-        public int id { get; }
+        public int id { set; get; }
         public string name { set; get; }
         public string login { set; get; }
         public string pass { set; get; }
@@ -14,6 +14,6 @@ namespace Dot.Library.Database.Model
         public string adress { set; get; }
         public string postalCode { set; get; }
 
-        public List<int> UserRent { get; set; } = new List<int>();
+        //public List<int> UserRent { get; set; } = new List<int>();
     }
 }
