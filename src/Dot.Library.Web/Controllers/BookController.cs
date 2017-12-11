@@ -10,20 +10,8 @@ namespace Dot.Library.Web.Controllers
     [Route("api/[controller]")]
     public class BookController : Controller
     {
-        private IList<Book> _books = new List<Book>() { new Book() {
-           ID= 1,
-           ImgURL ="http://ecsmedia.pl/c/wiedzmin-tom-7-pani-jeziora-w-iext44045082.jpg",
-           Title= "Pani jeziora",Publisher="SuperNowa",Authors= new string[] {"Andrzej Sapkowski"},
-           Description = "Potwór zaatakował z " +
-            "ciemności, z zasadzki, cicho i wrednie." +
-            " Zmaterializował się nagle wśród mroku jak wybuchający płomień. Jak jęzor płomienia",
-            Quantity= 666
-        }, new Book(){
-           ID= 2,
-           ImgURL ="http://s.lubimyczytac.pl/upload/books/3937000/3937616/523293-352x500.jpg",
-           Title= "Gra o tron",Publisher="SuperNowa",Authors= new string[] {"George R.R Martin"},
-           Description = "W Zachodnich Krainach o ośmiu tysiącach lat zapisanej historii widmo wojen i katastrofy nieustannie wisi nad ludźmi.",
-            Quantity= 667} };
+        private IList<Book> _books = new List<Book>();
+          
 
         [HttpGet]
         public IEnumerable<Book> GetAll() => _books;
