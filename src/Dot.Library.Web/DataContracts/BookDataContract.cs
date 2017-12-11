@@ -1,18 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
+using System.Threading.Tasks;
 
-namespace Dot.Library.Database.Model
+namespace Dot.Library.Web.DataContracts
 {
-    public class Book
+    [DataContract]
+    public class BookDataContract
     {
+        [DataMember]
         public int ID { get; set; }
+        [DataMember]
         public string ImgURL { get; set; }
+        [DataMember]
         public string Title { get; set; }
+        [DataMember]
         public string Publisher { get; set; }
+        [DataMember]
         public string[] Authors { get; set; }
+        [DataMember]
         public string Description { get; set; }
+        [DataMember]
         public int Quantity { get; set; }
     }
 }
