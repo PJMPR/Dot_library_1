@@ -13,6 +13,7 @@ namespace Dot.Library.Web.Controllers
 
         private static List<BookReservation> _bookReservations = new List<BookReservation>();
 
+
         [HttpGet]
         public IEnumerable<BookReservation> GetAll() => _bookReservations;
 
