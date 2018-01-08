@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Dot.Library.Database.Model;
 using Dot.Library.Web.DataContracts;
-
 using AutoMapper;
 
 namespace Dot.Library.Web.Controllers
