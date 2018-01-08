@@ -13,17 +13,21 @@ namespace Dot.Library.Web.Controllers
     [Route("api/[controller]")]
     public class BookController : Controller
     {
-        private IList<Book> _books = new List<Book>();
-          
+        readonly LibraryContext _libraryContext;  
+
+        public BookController(LibraryContext libraryContext)
+        {
+            _libraryContext = libraryContext;
+        }
 
         [HttpGet]
-        public IEnumerable<BookDataContract> GetAll() => _books.Select(book => Mapper.Map<BookDataContract>(book));
+        public IEnumerable<BookDataContract> GetAll() => _libraryContext.Set<Book>().Select(book => Mapper.Map<BookDataContract>(book));
 
         // GET api/values/5
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var item = _books.FirstOrDefault(x => x.ID == id);
+            var item = _libraryContext.Book.FirstOrDefault(x => x.ID == id);
             if (item == null)
             {
                 return NotFound();
@@ -40,7 +44,8 @@ namespace Dot.Library.Web.Controllers
                 return BadRequest();
             }
             var mapped = Mapper.Map<Book>(book);
-            _books.Add(mapped);
+            _libraryContext.Book.Add(mapped);
+            _libraryContext.SaveChanges();
             return CreatedAtRoute("GetById", new { id = mapped.ID }, mapped);
         }
 
@@ -52,12 +57,11 @@ namespace Dot.Library.Web.Controllers
             {
                 return BadRequest();
             }
-            var searchedBook = _books.FirstOrDefault(x => x.ID == book.ID);
+            var searchedBook = _libraryContext.Book.FirstOrDefault(x => x.ID == book.ID);
             if (searchedBook == null)
             {
                 return NotFound();
             }
-            _books.Remove(searchedBook);
 
             ///Dodać mapper gdy bedzie implementacja modelu Book
             ///
@@ -70,7 +74,8 @@ namespace Dot.Library.Web.Controllers
             searchedBook.Title = mapped.Title;
             searchedBook.Description = mapped.Description;
             searchedBook.Authors = mapped.Authors;
-            _books.Add(searchedBook);
+            _libraryContext.Entry(searchedBook).CurrentValues.SetValues(mapped);
+            _libraryContext.SaveChanges();
             return new NoContentResult();
         }
 
@@ -78,12 +83,12 @@ namespace Dot.Library.Web.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var searchedBook = _books.FirstOrDefault(x => x.ID == id);
-            if (searchedBook == null)
-            {
-                return NotFound();
-            }
-            _books.Remove(searchedBook);
+            var searchedBook = new Book() { ID = id };
+
+            _libraryContext.Book.Attach(searchedBook);
+            _libraryContext.Book.Remove(searchedBook);
+            _libraryContext.SaveChanges();
+
             return new NoContentResult();
         }
     }
