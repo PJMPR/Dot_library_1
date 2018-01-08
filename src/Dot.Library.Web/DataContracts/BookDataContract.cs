@@ -18,7 +18,7 @@ namespace Dot.Library.Web.DataContracts
         [DataMember]
         public string Publisher { get; set; }
         [DataMember]
-        public string[] Authors { get; set; }
+        public List<BookAuthorDataContract> Authors { get; set; }
         [DataMember]
         public string Description { get; set; }
         [DataMember]

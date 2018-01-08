@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Dot.Library.Database.Model;
+using Dot.Library.Web.DataContracts;
+
+using AutoMapper;
 
 namespace Dot.Library.Web.Controllers
 {
@@ -14,7 +17,7 @@ namespace Dot.Library.Web.Controllers
           
 
         [HttpGet]
-        public IEnumerable<Book> GetAll() => _books;
+        public IEnumerable<BookDataContract> GetAll() => _books.Select(book => Mapper.Map<BookDataContract>(book));
 
         // GET api/values/5
         [HttpGet("{id}")]
@@ -25,24 +28,25 @@ namespace Dot.Library.Web.Controllers
             {
                 return NotFound();
             }
-            return new ObjectResult(item);
+            return new ObjectResult(Mapper.Map<BookDataContract>(item));
         }
 
         // POST api/values
         [HttpPost]
-        public IActionResult AddBook([FromBody]Book book)
+        public IActionResult AddBook([FromBody]BookDataContract book)
         {
             if (book == null)
             {
                 return BadRequest();
             }
-            _books.Add(book);
-            return CreatedAtRoute("GetById", new { id = book.ID }, book);
+            var mapped = Mapper.Map<Book>(book);
+            _books.Add(mapped);
+            return CreatedAtRoute("GetById", new { id = mapped.ID }, mapped);
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]Book book)
+        public IActionResult Put(int id, [FromBody]BookDataContract book)
         {
             if (book == null || book.ID != id)
             {
@@ -58,12 +62,14 @@ namespace Dot.Library.Web.Controllers
             ///Dodać mapper gdy bedzie implementacja modelu Book
             ///
 
-            searchedBook.ImgURL = book.ImgURL;
-            searchedBook.Publisher = book.Publisher;
-            searchedBook.Quantity = book.Quantity;
-            searchedBook.Title = book.Title;
-            searchedBook.Description = book.Description;
-            searchedBook.Authors = book.Authors;
+            var mapped = Mapper.Map<Book>(book);
+
+            searchedBook.ImgURL = mapped.ImgURL;
+            searchedBook.Publisher = mapped.Publisher;
+            searchedBook.Quantity = mapped.Quantity;
+            searchedBook.Title = mapped.Title;
+            searchedBook.Description = mapped.Description;
+            searchedBook.Authors = mapped.Authors;
             _books.Add(searchedBook);
             return new NoContentResult();
         }
