@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Dot.Library.Database.Model;
+using Dot.Library.Web.DataContracts;
+using AutoMapper;
 
 namespace Dot.Library.Web.Controllers
 {
@@ -18,7 +20,7 @@ namespace Dot.Library.Web.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Category> GetAll() => _libraryContext.Set<Category>();
+        public IEnumerable<CategoryDataContract> GetAll() => _libraryContext.Set<Category>().Select(category => Mapper.Map<CategoryDataContract>(category));
 
         // GET api/values/5
         [HttpGet("{id}")]
@@ -29,25 +31,26 @@ namespace Dot.Library.Web.Controllers
             {
                 return NotFound();
             }
-            return new ObjectResult(item);
+            return new ObjectResult(Mapper.Map<CategoryDataContract>(item));
         }
 
         // POST api/values
         [HttpPost]
-        public IActionResult AdCategory([FromBody]Category category)
+        public IActionResult AdCategory([FromBody]CategoryDataContract category)
         {
             if (category == null)
             {
                 return BadRequest();
             }
-            _libraryContext.Category.Add(category);
+            var mapped = Mapper.Map<Category>(category);
+            _libraryContext.Category.Add(mapped);
             _libraryContext.SaveChanges();
-            return CreatedAtRoute("GetById", new { id = category.ID }, category);
+            return CreatedAtRoute("GetById", new { id = mapped.ID }, mapped);
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]Category category)
+        public IActionResult Put(int id, [FromBody]CategoryDataContract category)
         {
             if (category == null || category.ID != id)
             {
@@ -58,7 +61,9 @@ namespace Dot.Library.Web.Controllers
             {
                 return NotFound();
             }
-            _libraryContext.Entry(searchedCategory).CurrentValues.SetValues(category);
+
+            var mapped = Mapper.Map<Category>(category);
+            _libraryContext.Entry(searchedCategory).CurrentValues.SetValues(mapped);
             _libraryContext.SaveChanges();
             return new NoContentResult();
         }
