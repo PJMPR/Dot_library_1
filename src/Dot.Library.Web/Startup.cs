@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 using AutoMapper;
 using Dot.Library.Web.DataContracts;
 using Dot.Library.Database.Model;
+using Dot.Library.Database.Model.Dot.Library.Database.Model;
 
 namespace Dot.Library.Web
 {
@@ -49,7 +50,12 @@ namespace Dot.Library.Web
             Mapper.Initialize(cfg =>
             {
                 cfg.CreateMap<Book, BookDataContract>();
-                cfg.CreateMap<Author, BookAuthorDataContract>();
+                cfg.CreateMap<Author, AuthorDataContract>();
+                cfg.CreateMap<Chapter, ChapterDataContract>();
+                cfg.CreateMap<BookReservation, BookReservationDataContract>();
+                cfg.CreateMap<Category, CategoryDataContract>();
+                cfg.CreateMap<Message, MessageDataContract>();
+                cfg.CreateMap<User, UserDataContract>();
             });
 
         }

@@ -66,13 +66,6 @@ namespace Dot.Library.Web.Controllers
             ///
 
             var mapped = Mapper.Map<Book>(book);
-
-            searchedBook.ImgURL = mapped.ImgURL;
-            searchedBook.Publisher = mapped.Publisher;
-            searchedBook.Quantity = mapped.Quantity;
-            searchedBook.Title = mapped.Title;
-            searchedBook.Description = mapped.Description;
-            searchedBook.Authors = mapped.Authors;
             _libraryContext.Entry(searchedBook).CurrentValues.SetValues(mapped);
             _libraryContext.SaveChanges();
             return new NoContentResult();
