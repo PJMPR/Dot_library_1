@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Dot.Library.Database.Model;
+using AutoMapper;
+using Dot.Library.Web.DataContracts;
 
 namespace Dot.Library.Web.Controllers
 {
@@ -14,13 +16,13 @@ namespace Dot.Library.Web.Controllers
 
         readonly LibraryContext _libraryContext;
 
-        public AuthorController(LibraryContext libraryContext)
+        public AuthorController(LibraryContext libraryContext)  
         {
             _libraryContext = libraryContext;
         }
 
         [HttpGet]
-        public IEnumerable<Author> GetAll() => _libraryContext.Set<Author>();
+        public IEnumerable<AuthorDataContract> GetAll() => _libraryContext.Set<Author>().Select(x=> Mapper.Map<AuthorDataContract>(x));
 
         // GET api/values/5
         [HttpGet("{id}")]
@@ -31,25 +33,26 @@ namespace Dot.Library.Web.Controllers
             {
                 return NotFound();
             }
-            return new ObjectResult(item);
+            return new ObjectResult(Mapper.Map<AuthorDataContract>(item));
         }
 
         // POST api/values
         [HttpPost]
-        public IActionResult AddAuthor([FromBody]Author author)
+        public IActionResult AddAuthor([FromBody]AuthorDataContract author)
         {
             if (author == null)
             {
                 return BadRequest();
             }
-            _libraryContext.Author.Add(author);
+            var mapped = Mapper.Map<Author>(author);
+            _libraryContext.Author.Add(mapped);
             _libraryContext.SaveChanges();
-            return CreatedAtRoute("GetById", new { id = author.ID }, author);
+            return CreatedAtRoute("GetById", new { id = mapped.ID }, mapped);
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]Author author)
+        public IActionResult Put(int id, [FromBody]AuthorDataContract author)
         {
             if (author == null || author.ID != id)
             {
@@ -61,7 +64,8 @@ namespace Dot.Library.Web.Controllers
                 return NotFound();
             }
 
-            _libraryContext.Entry(searchedAuthor).CurrentValues.SetValues(author);
+            var mapped = Mapper.Map<Author>(author);
+            _libraryContext.Entry(searchedAuthor).CurrentValues.SetValues(mapped);
             _libraryContext.SaveChanges();
             return new NoContentResult();
         }

@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Dot.Library.Database.Model;
 using Dot.Library.Database.Model.Dot.Library.Database.Model;
+using AutoMapper;
+using Dot.Library.Web.DataContracts;
 
 namespace Dot.Library.Web.Controllers
 {
@@ -20,7 +22,7 @@ namespace Dot.Library.Web.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Message> GetAll() => _libraryContext.Set<Message>();
+        public IEnumerable<MessageDataContract> GetAll() => _libraryContext.Set<Message>().Select(x=> Mapper.Map<MessageDataContract>(x));
 
         // GET api/values/5
         [HttpGet("{id}")]
@@ -31,25 +33,25 @@ namespace Dot.Library.Web.Controllers
             {
                 return NotFound();
             }
-            return new ObjectResult(item);
+            return new ObjectResult(Mapper.Map<MessageDataContract>(item));
         }
 
         // POST api/values
         [HttpPost]
-        public IActionResult AddMessage([FromBody]Message message)
+        public IActionResult AddMessage([FromBody]MessageDataContract message)
         {
             if (message == null)
             {
                 return BadRequest();
-            }
-            _libraryContext.Message.Add(message);
+            }var mapped = Mapper.Map<Message>(message);
+            _libraryContext.Message.Add(mapped);
             _libraryContext.SaveChanges();
-            return CreatedAtRoute("GetById", new { id = message.Id }, message);
+            return CreatedAtRoute("GetById", new { id = mapped.Id }, mapped);
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]Message message)
+        public IActionResult Put(int id, [FromBody]MessageDataContract message)
         {
             if (message == null || message.Id != id)
             {
@@ -60,7 +62,8 @@ namespace Dot.Library.Web.Controllers
             {
                 return NotFound();
             }
-            _libraryContext.Entry(searchedMessage).CurrentValues.SetValues(message);
+            var mapped = Mapper.Map<Message>(message);
+            _libraryContext.Entry(searchedMessage).CurrentValues.SetValues(mapped);
             _libraryContext.SaveChanges();
             return new NoContentResult();
         }
