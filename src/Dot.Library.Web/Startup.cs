@@ -9,6 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using AutoMapper;
+using Dot.Library.Web.DataContracts;
+using Dot.Library.Database.Model;
 
 namespace Dot.Library.Web
 {
@@ -34,7 +37,7 @@ namespace Dot.Library.Web
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseCors(builder => 
+            app.UseCors(builder =>
             {
                 builder.AllowAnyHeader()
                     .AllowAnyMethod()
@@ -42,6 +45,13 @@ namespace Dot.Library.Web
                     .Build();
             });
             app.UseMvcWithDefaultRoute();
+
+            Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<Book, BookDataContract>();
+                cfg.CreateMap<Author, BookAuthorDataContract>();
+            });
+
         }
     }
 }
