@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Dot.Library.Database.Model;
+using AutoMapper;
+using Dot.Library.Web.DataContracts;
 
 namespace Dot.Library.Web.Controllers
 {
@@ -18,7 +20,7 @@ namespace Dot.Library.Web.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<BookReservation> GetAll() => _libraryContext.Set<BookReservation>();
+        public IEnumerable<BookReservationDataContract> GetAll() => _libraryContext.Set<BookReservation>().Select(x=> Mapper.Map<BookReservationDataContract>(x));
 
         // GET api/values/5
         [HttpGet("{id}")]
@@ -29,25 +31,27 @@ namespace Dot.Library.Web.Controllers
             {
                 return NotFound();
             }
-            return new ObjectResult(item);
+            return new ObjectResult(Mapper.Map<BookReservationDataContract>(item));
         }
 
         // POST api/values
         [HttpPost]
-        public IActionResult AddBookReservation([FromBody]BookReservation bookReservation)
+        public IActionResult AddBookReservation([FromBody]BookReservationDataContract bookReservation)
         {
             if (bookReservation == null)
             {
                 return BadRequest();
             }
-            _libraryContext.BookReservation.Add(bookReservation);
+            var mapped = Mapper.Map<BookReservation>(bookReservation);
+
+            _libraryContext.BookReservation.Add(mapped);
             _libraryContext.SaveChanges();
-            return CreatedAtRoute("GetById", new { id = bookReservation.ID }, bookReservation);
+            return CreatedAtRoute("GetById", new { id = mapped.ID }, mapped);
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]BookReservation bookReservation)
+        public IActionResult Put(int id, [FromBody]BookReservationDataContract bookReservation)
         {
             if (bookReservation == null || bookReservation.ID != id)
             {
@@ -58,7 +62,9 @@ namespace Dot.Library.Web.Controllers
             {
                 return NotFound();
             }
-            _libraryContext.Entry(searchedBookReservation).CurrentValues.SetValues(bookReservation);
+            var mapped = Mapper.Map<BookReservation>(bookReservation);
+       
+            _libraryContext.Entry(searchedBookReservation).CurrentValues.SetValues(mapped);
             _libraryContext.SaveChanges();
             return new NoContentResult();
         }
