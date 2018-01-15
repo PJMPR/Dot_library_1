@@ -10,25 +10,21 @@ namespace Dot.Library.Web.Controllers
     [Route("api/[controller]")]
     public class CategoryController : Controller
     {
-        private IList<Category> _category = new List<Category>() { 
-        new Category() {
-           ID= 1,
-           Title= "Przygodowe"}, 
-        new Category(){
-           ID= 2,
-           Title= "Krymina³"}, 
-        new Category(){
-           ID= 3,
-           Title= "Fantasy"},};
+        readonly LibraryContext _libraryContext;
+
+        public CategoryController(LibraryContext libraryContext)
+        {
+            _libraryContext = libraryContext;
+        }
 
         [HttpGet]
-        public IEnumerable<Category> GetAll() => _category;
+        public IEnumerable<Category> GetAll() => _libraryContext.Set<Category>();
 
-      
+        // GET api/values/5
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var item = _category.FirstOrDefault(x => x.ID == id);
+            var item = _libraryContext.Category.FirstOrDefault(x => x.ID == id);
             if (item == null)
             {
                 return NotFound();
@@ -36,18 +32,20 @@ namespace Dot.Library.Web.Controllers
             return new ObjectResult(item);
         }
 
+        // POST api/values
         [HttpPost]
-        public IActionResult AddCategory([FromBody]Category category)
+        public IActionResult AdCategory([FromBody]Category category)
         {
             if (category == null)
             {
                 return BadRequest();
             }
-            _category.Add(category);
+            _libraryContext.Category.Add(category);
+            _libraryContext.SaveChanges();
             return CreatedAtRoute("GetById", new { id = category.ID }, category);
         }
 
-        
+        // PUT api/values/5
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody]Category category)
         {
@@ -55,30 +53,26 @@ namespace Dot.Library.Web.Controllers
             {
                 return BadRequest();
             }
-            var searchedCategory = _category.FirstOrDefault(x => x.ID == category.ID);
+            var searchedCategory = _libraryContext.Category.FirstOrDefault(x => x.ID == category.ID);
             if (searchedCategory == null)
             {
                 return NotFound();
             }
-            _category.Remove(searchedCategory);
-
-          
-            searchedCategory.Title = category.Title;
-          
-            _category.Add(searchedCategory);
+            _libraryContext.Entry(searchedCategory).CurrentValues.SetValues(category);
+            _libraryContext.SaveChanges();
             return new NoContentResult();
         }
 
-      
+        // DELETE api/values/5
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var searchedCategory = _category.FirstOrDefault(x => x.ID == id);
-            if (searchedCategory == null)
-            {
-                return NotFound();
-            }
-            _category.Remove(searchedCategory);
+            var searchedCategory = new Category() { ID = id };
+
+            _libraryContext.Category.Attach(searchedCategory);
+            _libraryContext.Category.Remove(searchedCategory);
+            _libraryContext.SaveChanges();
+
             return new NoContentResult();
         }
     }
