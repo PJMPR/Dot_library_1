@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading.Tasks;
 
 namespace Dot.Library.Web.DataContracts
 {
     [DataContract]
-    public class AuthorDataContract
+    public class BookReservationDataContract
     {
         [DataMember]
         public int ID { get; set; }
         [DataMember]
-        public string Name { get; set; }
+        public UserDataContract user { get; set; }
         [DataMember]
-        public string Surname { get; set; }
+        public DateTime date { get; set; }
         [DataMember]
-        public List<BookDataContract> publishedBooks { get; set; }
+        public List<BookDataContract> reservatedBooks { get; set; }
     }
 }

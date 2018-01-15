@@ -1,8 +1,11 @@
+using Dot.Library.Database.Model;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dot.Library.Web.DataContracts;
+using AutoMapper;
 
 namespace Dot.Library.Web.Controllers
 {
@@ -10,76 +13,81 @@ namespace Dot.Library.Web.Controllers
     public class UserController : Controller
     {
 
+        readonly LibraryContext _libraryContext;
 
-        //private readonly IUserRepository _userRepository;
+        public UserController(LibraryContext libraryContext)
+        {
+            _libraryContext = libraryContext;
+        }
 
-        //public UserController(IUserRepository userRepository)
-        //{
-        //    _userRepository = userRepository;
-        //}
+        [HttpGet]
+        public IEnumerable<UserDataContract> GetAll() => _libraryContext.Set<User>().Select(user => Mapper.Map<UserDataContract>(user));
 
-        //public IEnumerable<User> Get()
-        //{
-        //    return _userRepository.Get();
-        //}
+        // GET api/values/5
+        [HttpGet("{id}")]
+        public IActionResult GetById(int id)
+        {
+            var item = _libraryContext.User.FirstOrDefault(x => x.id == id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+            return new ObjectResult(Mapper.Map<UserDataContract>(item));
+        }
 
-        //public User Get(int id)
-        //{
-        //    var user = _userRepository.Get(id);
+        // POST api/values
+        [HttpPost]
+        public IActionResult AddUser([FromBody]UserDataContract user)
+        {
+            if (user == null)
+            {
+                return BadRequest();
+            }
+            var mapped = Mapper.Map<User>(user);
+            _libraryContext.User.Add(mapped);
+            _libraryContext.SaveChanges();
+            return CreatedAtRoute("GetById", new { id = mapped.id }, mapped);
+        }
 
-        //    if (user == null)
-        //    {
-        //        throw new HttpResponseException(new HttpResponseMessage
-        //        {
-        //            StatusCode = HttpStatusCode.NotFound,
-        //            Content = new StringContent("User not found")
-        //        });
-        //    }
+        // PUT api/values/5
+        [HttpPut("{id}")]
+        public IActionResult Put(int id, [FromBody]BookDataContract user)
+        {
+            if (user == null || user.ID != id)
+            {
+                return BadRequest();
+            }
+            var searchedUser = _libraryContext.User.FirstOrDefault(x => x.id == user.ID);
+            if (searchedUser == null)
+            {
+                return NotFound();
+            }
 
-        //    return task;
-        //}
+            var mapped = Mapper.Map<User>(user);
 
-        //public HttpResponseMessage<User> Post(User user)
-        //{
-        //    user = _userRepository.Post(user);
+            searchedUser.adress = mapped.adress;
+            searchedUser.id = mapped.id;
+            searchedUser.login = mapped.login;
+            searchedUser.name = mapped.name;
+            searchedUser.pass = mapped.pass;
+            searchedUser.postalCode = mapped.postalCode;
+            searchedUser.surname = mapped.surname;
+            _libraryContext.Entry(searchedUser).CurrentValues.SetValues(mapped);
+            _libraryContext.SaveChanges();
+            return new NoContentResult();
+        }
 
-        //    var response = new HttpResponseMessage<User>(user, HttpStatusCode.Created);
+        // DELETE api/values/5
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var searchedUser = new User() { id = id };
+            _libraryContext.User.Attach(searchedUser);
+            _libraryContext.User.Remove(searchedUser);
+            _libraryContext.SaveChanges();
 
-        //    string uri = Url.Route(null, new { id = user.Id });
-        //    response.Headers.Location = new Uri(Request.RequestUri, uri);
-
-        //    return response;
-        //}
-
-        //public User Put(User user)
-        //{
-        //    try
-        //    {
-        //        user = _userRepository.Put(user);
-        //    }
-        //    catch (Exception)
-        //    {
-        //        throw new HttpResponseException(new HttpResponseMessage
-        //        {
-        //            StatusCode = HttpStatusCode.NotFound,
-        //            Content = new StringContent("Task not found")
-        //        });
-        //    }
-
-        //    return user;
-        //}
-
-        //public HttpResponseMessage Delete(int id)
-        //{
-        //    _userRepository.Delete(id);
-
-        //    return new HttpResponseMessage
-        //    {
-        //        StatusCode = HttpStatusCode.NoContent
-        //    };
-        //}
-
-
+            return new NoContentResult();
+        }
 
     }
 }
