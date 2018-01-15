@@ -1,31 +1,32 @@
-using Dot.Library.Database.Model;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Dot.Library.Database.Model;
 
 namespace Dot.Library.Web.Controllers
 {
     [Route("api/[controller]")]
-    public class UserController : Controller
+
+    public class AuthorController : Controller
     {
 
         readonly LibraryContext _libraryContext;
 
-        public UserController(LibraryContext libraryContext)
+        public AuthorController(LibraryContext libraryContext)
         {
             _libraryContext = libraryContext;
         }
 
         [HttpGet]
-        public IEnumerable<User> GetAll() => _libraryContext.Set<User>();
+        public IEnumerable<Author> GetAll() => _libraryContext.Set<Author>();
 
         // GET api/values/5
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var item = _libraryContext.User.FirstOrDefault(x => x.id == id);
+            var item = _libraryContext.Author.FirstOrDefault(x => x.ID == id);
             if (item == null)
             {
                 return NotFound();
@@ -35,33 +36,32 @@ namespace Dot.Library.Web.Controllers
 
         // POST api/values
         [HttpPost]
-        public IActionResult AddUser([FromBody]User user)
+        public IActionResult AddAuthor([FromBody]Author author)
         {
-            if (user == null)
+            if (author == null)
             {
                 return BadRequest();
             }
-            _libraryContext.User.Add(user);
+            _libraryContext.Author.Add(author);
             _libraryContext.SaveChanges();
-            return CreatedAtRoute("GetById", new { id = user.id }, user);
+            return CreatedAtRoute("GetById", new { id = author.ID }, author);
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]User user)
+        public IActionResult Put(int id, [FromBody]Author author)
         {
-            if (user == null || user.id != id)
+            if (author == null || author.ID != id)
             {
                 return BadRequest();
             }
-            var searchedUser = _libraryContext.User.FirstOrDefault(x => x.id == user.id);
-            if (searchedUser == null)
+            var searchedAuthor = _libraryContext.Author.FirstOrDefault(x => x.ID == author.ID);
+            if (searchedAuthor == null)
             {
                 return NotFound();
             }
 
-
-            _libraryContext.Entry(searchedUser).CurrentValues.SetValues(user);
+            _libraryContext.Entry(searchedAuthor).CurrentValues.SetValues(author);
             _libraryContext.SaveChanges();
             return new NoContentResult();
         }
@@ -70,13 +70,13 @@ namespace Dot.Library.Web.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var searchedUser = new User() { id = id };
-            _libraryContext.User.Attach(searchedUser);
-            _libraryContext.User.Remove(searchedUser);
+            var searchedAuthor = new Author() { ID = id };
+            _libraryContext.Author.Attach(searchedAuthor);
+            _libraryContext.Author.Remove(searchedAuthor);
             _libraryContext.SaveChanges();
 
             return new NoContentResult();
         }
-
     }
+
 }

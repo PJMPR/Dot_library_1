@@ -58,16 +58,6 @@ namespace Dot.Library.Web.Controllers
             {
                 return NotFound();
             }
-
-            ///Dodać mapper gdy bedzie implementacja modelu Book
-            ///
-
-            searchedBook.ImgURL = book.ImgURL;
-            searchedBook.Publisher = book.Publisher;
-            searchedBook.Quantity = book.Quantity;
-            searchedBook.Title = book.Title;
-            searchedBook.Description = book.Description;
-            searchedBook.Authors = book.Authors;
             _libraryContext.Entry(searchedBook).CurrentValues.SetValues(book);
             _libraryContext.SaveChanges();
             return new NoContentResult();
